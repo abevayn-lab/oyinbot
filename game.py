@@ -1,4 +1,3 @@
-
     # ------------------------------------------------------------ OVOZ BERISH
     def vote_kb(self) -> InlineKeyboardMarkup:
         rows = [[InlineKeyboardButton(text=p.name[:30], callback_data=f"v:{self.chat_id}:{p.uid}")]
