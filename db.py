@@ -1,35 +1,3 @@
-"""SQLite ma'lumotlar bazasi: foydalanuvchilar, XP, majburiy obunalar, guruhlar, sozlamalar."""
-import sqlite3
-import threading
-import time
-
-_lock = threading.RLock()
-_conn = sqlite3.connect("mafia.db", check_same_thread=False)
-_conn.row_factory = sqlite3.Row
-
-
-def init():
-    with _lock:
-        _conn.executescript(
-            """
-            CREATE TABLE IF NOT EXISTS users(
-                user_id INTEGER PRIMARY KEY,
-                name TEXT,
-                username TEXT,
-                xp INTEGER DEFAULT 0,
-                games INTEGER DEFAULT 0,
-                wins INTEGER DEFAULT 0,
-                link_ok INTEGER DEFAULT 0,
-                joined INTEGER
-            );
-            CREATE TABLE IF NOT EXISTS subs(
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                kind TEXT,          -- 'tg' (tekshiriladi) yoki 'link' (Instagram va boshqalar)
-                title TEXT,
-                chat_id TEXT,
-                url TEXT
-            );
-            CREATE TABLE IF NOT EXISTS groups(
                 chat_id INTEGER PRIMARY KEY,
                 title TEXT,
                 added INTEGER,
