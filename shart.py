@@ -282,15 +282,25 @@ async def next_callback(call: CallbackQuery, bot: Bot):
         SESSIONS.pop(chat_id, None)
         await call.answer("O‘yin yakunlandi!")
         return
-    s["phase"] = "lobby"
-    # Reuse picker logic after moving to the next round.
-    s["phase"] = "done"
-    await pick_callback(
-        CallbackQuery(
-            id=call.id, from_user=call.from_user, chat_instance=call.chat_instance,
-            message=call.message, data=f"shpick:{chat_id}"
-        ), bot
+    selected = random.choice(s["remaining"])
+    s["remaining"].remove(selected)
+    s["selected"] = selected
+    s["conditions"] = []
+    s["submitted"] = set()
+    s["phase"] = "collecting"
+    name = s["players"][selected]["name"]
+    link = f"https://t.me/{s['bot_username']}?start=shart_{chat_id}_{selected}"
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✍️ Shart yozish", url=link)],
+        [InlineKeyboardButton(text="🎡 Shartlarni aylantirish", callback_data=f"shspin:{chat_id}")],
+    ])
+    await call.message.answer(
+        f"🎉 <b>KEYINGI ODAM TANLANDI!</b>\\n\\n"
+        f"👤 Tanlangan odam: {mention(selected, name)}\\n\\n"
+        "Endi guruhdagilar “Shart yozish” tugmasini bosib, botga shart yuborishsin.",
+        reply_markup=kb,
     )
+    await call.answer("Keyingi odam tanlandi!")
 
 
 async def stop_handler(message: Message, bot: Bot):
