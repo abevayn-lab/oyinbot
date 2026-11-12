@@ -152,14 +152,28 @@ async def pick_callback(call: CallbackQuery, bot: Bot):
         [InlineKeyboardButton(text="✍️ Shart yozish", url=link)],
         [InlineKeyboardButton(text="🎡 Shartlarni aylantirish", callback_data=f"shspin:{chat_id}")],
     ])
-    await call.message.answer(
+    wheel_names = "\n".join(
+        f"• {escape(s['players'][uid]['name'])}" for uid in s["players"]
+    )
+    wheel_msg = await call.message.answer(
+        "🎡 <b>ODAM TANLASH G‘ILDIRAGI</b>\n\n" + wheel_names + "\n\n🔄 Aylanmoqda..."
+    )
+    await call.answer("G‘ildirak aylanmoqda!")
+    for frame in ("🎡 🔴 ⚪ 🔵 ⚪", "🔄 ⚪ 🔴 ⚪ 🔵", "🎡 🔵 ⚪ 🔴 ⚪", "🔄 ⚪ 🔵 ⚪ 🔴"):
+        await asyncio.sleep(0.5)
+        try:
+            await wheel_msg.edit_text(
+                "🎡 <b>ODAM TANLASH G‘ILDIRAGI</b>\n\n" + wheel_names + f"\n\n{frame}"
+            )
+        except Exception:
+            pass
+    await wheel_msg.edit_text(
         f"🎉 <b>G‘ILDIRAK TANLADI!</b>\n\n"
         f"👤 Tanlangan odam: {mention(selected, name)}\n\n"
         "Endi guruhdagilar “Shart yozish” tugmasini bosib, shu odam uchun botga shart yuborishsin.\n"
         "Shartlar yig‘ilgach, admin “Shartlarni aylantirish” tugmasini bosadi.",
         reply_markup=kb,
     )
-    await call.answer("Odam tanlandi!")
 
 
 async def submit_condition(message: Message):
