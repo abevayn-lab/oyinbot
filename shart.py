@@ -274,7 +274,10 @@ async def done_callback(call: CallbackQuery, bot: Bot):
         await call.answer("Bu tugmani faqat tanlangan odam yoki admin bosishi mumkin.", show_alert=True)
         return
     s["phase"] = "await_next"
-    await call.message.edit_reply_markup(reply_markup=None)
+    next_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🎡 Keyingi odamni tanlash", callback_data=f"shnext:{chat_id}")]
+    ])
+    await call.message.edit_reply_markup(reply_markup=next_kb)
     await call.message.answer(f"✅ {mention(target_id, s['players'][target_id]['name'])} shartni bajarganini tasdiqladi!")
     await call.answer("Bajarildi!")
 
@@ -309,8 +312,8 @@ async def next_callback(call: CallbackQuery, bot: Bot):
         [InlineKeyboardButton(text="🎡 Shartlarni aylantirish", callback_data=f"shspin:{chat_id}")],
     ])
     await call.message.answer(
-        f"🎉 <b>KEYINGI ODAM TANLANDI!</b>\\n\\n"
-        f"👤 Tanlangan odam: {mention(selected, name)}\\n\\n"
+        f"🎉 <b>KEYINGI ODAM TANLANDI!</b>\n\n"
+        f"👤 Tanlangan odam: {mention(selected, name)}\n\n"
         "Endi guruhdagilar “Shart yozish” tugmasini bosib, botga shart yuborishsin.",
         reply_markup=kb,
     )
