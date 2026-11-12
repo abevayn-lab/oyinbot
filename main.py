@@ -243,7 +243,9 @@ async def main():
     )
     await bot.set_my_commands(
         [BotCommand(command="game", description="Yangi Mafia o'yini"),
-         BotCommand(command="fast", description="Tezkor Mafia o'yini")],
+         BotCommand(command="fast", description="Tezkor Mafia o'yini"),
+         BotCommand(command="shart", description="Shart chambaragini boshlash"),
+         BotCommand(command="shartstop", description="Shart chambaragini to'xtatish")],
         scope=BotCommandScopeAllGroupChats(),
     )
     log.info("Bot started: @%s", bot_username)
