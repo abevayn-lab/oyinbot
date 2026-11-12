@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 
 import db
 from game import Game, GAMES, USER_GAME, MAX_PLAYERS
+from shart import register_shart, handle_start as handle_shart_start
 
 load_dotenv()
 raw_log_level = os.getenv("LOG_LEVEL", "INFO").strip().upper()
@@ -65,6 +66,9 @@ async def show_start(message: Message):
 @dp.message(CommandStart())
 async def start_handler(message: Message, command: CommandObject):
     db.upsert_user(message.from_user.id, message.from_user.full_name, message.from_user.username)
+    if command.args and command.args.startswith("shart_"):
+        await handle_shart_start(message, command.args)
+        return
     if command.args and command.args.startswith("join_"):
         try:
             chat_id = int(command.args[5:])
@@ -228,6 +232,7 @@ async def main():
     bot = Bot(TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     me = await bot.get_me()
     bot_username = me.username or ""
+    register_shart(dp, bot, bot_username)
     await bot.set_my_commands(
         [BotCommand(command="start", description="Botni ishga tushirish"),
          BotCommand(command="game", description="Guruhda yangi Mafia o'yini"),
